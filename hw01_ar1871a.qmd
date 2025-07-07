@@ -101,5 +101,6 @@ top10_days <- slice_head(arrange(daily_median, desc(median_dep_delay)), n = 10)
 
 #5th: Now let's see the results.
 View(top10_days)
+print(top10_days)
 
 ```
