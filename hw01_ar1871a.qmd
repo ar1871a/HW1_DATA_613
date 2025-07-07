@@ -50,21 +50,56 @@ if (!require("pacman")) install.packages("pacman")
 
 # Use pacman to install (if needed) and load the packages
 pacman::p_load(pacman, tidyverse,nycflights13)
-```
 
--   Consider the data in the nycflights13 package.
+#Consider the data in the nycflights13 package.
 
--   **Problem 2**: Is there a relationship between the age of a plane and its delays?
+#Problem 2: Is there a relationship between the age of a plane and its delays?
 
-#1st: Import Data
+# Load libraries
 library(tidyverse)
 library(nycflights13)
 
-#2nd: find the common nominator between planes and flights, which is tailnum and then put both datasets together.
-merge(flights, planes, by = "tailnum")
+# Putting both datasets together by a common indentifyer, in this case, tailnum.
+merged_data <- inner_join(flights, planes, by = "tailnum")
 
-#3rd: Get plane's age.
-mutate(Age = 2013 - year.y)
+# Getting Planes' Ages
+merged_data <- mutate(merged_data, Age = 2013 - year.y)
 
+#Seeing the relationship with a Scatterplot (with dep_delay and arr_delay)
+ggplot(merged_data, aes(x = Age, y = dep_delay)) +
+  geom_point(alpha = 0.3) +
+  labs(title = "Departure Delay vs Plane Age",
+       x = "Plane Age (years)",
+       y = "Departure Delay (minutes)") 
 
--   **Problem 3**: Find the 10 days of the year that have the highest median departure delay, then select all flights from those 10 days.
+ggplot(merged_data, aes(x = Age, y = arr_delay)) +
+  geom_point(alpha = 0.3) +
+  labs(title = "Arrival Delay vs Plane Age",
+       x = "Plane Age (years)",
+       y = "Arrival Delay (minutes)") 
+
+#Answer: Both scatterplots have a right-skewed distribution, meaning that the newer the planes the more delays they present, both for arrivals and departures. This doesn't necessarily mean that older planes used to be better, but it could be related to the fact that newer planes probably fly more and therefore there's more place for delays to happen.
+
+#Problem 3: Find the 10 days of the year that have the highest median departure delay, then select all flights from those 10 days.
+
+#1st: Create a "Date" variable based on year, month and days, and then group the flights based on this date.
+
+flights$date <- lubridate::make_date(flights$year, flights$month, flights$day)
+daily_groups <- group_by(flights, date)
+
+#2nd: Now let's count how many flights happened each day.
+
+daily_counts <- summarise(daily_groups, num_flights = n())
+
+#3rd: the next step would be to get the median value for each day.
+
+daily_median <- summarise(daily_groups,num_flights = n(), median_dep_delay = median(dep_delay, na.rm = TRUE))
+
+#4th: Now we can get the top 10 values.
+
+top10_days <- slice_head(arrange(daily_median, desc(median_dep_delay)), n = 10)
+
+#5th: Now let's see the results.
+View(top10_days)
+
+```
