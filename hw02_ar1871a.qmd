@@ -22,6 +22,7 @@ Observed value = 25.77, mean = 23.54, standard deviation = 2.44
 
 ```{r}
 
+library(tidyverse)
 library(lubridate)
 library(purrr)
 
@@ -54,6 +55,16 @@ Use and show R coding to calculate the standard deviation for each variable of t
 -   Sequence – the set of items to loop through
 
 -   Body – the operations performed in each iteration
+
+```{r}
+
+sd_vec <- vector(mode = "numeric", length = length(mtcars))
+for (i in seq_along(mtcars)) {
+  sd_vec[[i]] <- sd(mtcars[[i]], na.rm = TRUE)
+}
+sd_vec
+
+```
 
 ### Question 4:
 
