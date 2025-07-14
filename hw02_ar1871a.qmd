@@ -140,24 +140,27 @@ date_strings <- list("2023-06-10", "2022/12/25", "15-Aug-2021", "InvalidDate")
 
 ```{r}
 
+
 date_strings <- list("2023-06-10", "2022/12/25", "15-Aug-2021", "InvalidDate")
 
-date_safe <- possibly(
-  .f = function(x) {
-    date_time(x, orders = c("Y-m-d", "Y/m/d", "d-b-Y"))
+safe_parse <- possibly(.f = function(x) {
+    parse_date_time(x, orders = c("Y-m-d", "Y/m/d", "d-b-Y"))
   },
   otherwise = NA
 )
 
+
 converted_dates <- map(date_strings, safe_parse)
 
-month_names <- map_chr(converted_dates, ~
-  if (!is.na(.x)) as.character(month(.x, label = TRUE, abbr = FALSE))
-  else NA_character_
-)
+
+month_names <- map_chr(converted_dates, ~ {if (!is.na(.x)) {
+    as.character(month(.x, label = TRUE, abbr = FALSE))
+  } else {
+    NA_character_
+  }
+})
 
 print(month_names)
-
 ```
 
 ## Submission
