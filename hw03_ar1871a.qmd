@@ -63,7 +63,7 @@ df <- SaTr_tables[[1]] |>
 #4th: View cleaned column names to be able to rename them properly 
 names(df)
 
-#5th: Renaming Columns Names
+#5th: Renaming Columns Names and replacing --- with NA
 df <- df |> 
   select(
     state_or_territory,
