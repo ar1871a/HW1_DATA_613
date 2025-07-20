@@ -38,6 +38,63 @@ Go to the following page [List of U.S. states and territories by population](htt
 2.  Make sure the class of each column is correct
 3.  Replace `__` with `NA`
 
+```{r}
+#Libraries that I'll be using
+library(tidyverse)
+library(rvest)
+library(janitor)
+
+#1st: Load the HTML file
+SaTr <- read_html("https://en.wikipedia.org/wiki/List_of_U.S._states_and_territories_by_population#State_and_territory_rankings")
+xml2::write_html(SaTr, "/Users/agustinaroffo/Desktop/DATA-613/Homework/SaTr.html")
+
+SaTr <- read_html("/Users/agustinaroffo/Desktop/DATA-613/Homework/SaTr.html")
+class(SaTr)
+
+#2nd: Extract headers and tables
+SaTr_headers <- html_text2(html_elements(SaTr, css = "caption"))
+SaTr_tables <- html_elements(SaTr, css = ".wikitable") |> 
+  html_table(fill = TRUE)
+
+#3rd: Starting Cleaning.Use the first table from the wikipedia page ( List of U.S. states and territories by population) and clean column names
+df <- SaTr_tables[[1]] |> 
+  clean_names()
+
+#4th: View cleaned column names to be able to rename them properly 
+names(df)
+
+#5th: Renaming Columns Names
+df <- df |> 
+  select(
+    state_or_territory,
+    census_population_8_9_a_2,     
+    percent_us_2020,
+    percent_ec_2020,
+    house_seats_b,
+    pop_perelec_vote_2020_c,
+    pop_perseat_2020_a
+  ) |>
+  rename(
+    SoT = state_or_territory,
+    Population = census_population_8_9_a_2,
+    Percent_US = percent_us_2020,
+    Percent_EC = percent_ec_2020,
+    House_Seats = house_seats_b,
+    Pop_per_elec_vote_2020 = pop_perelec_vote_2020_c,
+    Pop_per_seat_2020 = pop_perseat_2020_a
+  ) |> 
+  mutate(across(everything(), ~ na_if(.x, ""))) |> 
+  mutate(
+    Population = as.numeric(str_remove_all(Population, ",")),
+    Percent_US = as.numeric(str_remove_all(Percent_US, "%")),
+    Percent_EC = as.numeric(str_remove_all(Percent_EC, "%")),
+    Pop_per_elec_vote_2020 = as.numeric(str_remove_all(Pop_per_elec_vote_2020, ",")),
+    Pop_per_seat_2020 = as.numeric(str_remove_all(Pop_per_seat_2020, ",")),
+    House_Seats = as.numeric(House_Seats)
+  )
+
+```
+
 ## SQL
 
 Please download a duck database. <https://data-science-master.github.io/lectures/data/flights.duckdb>
