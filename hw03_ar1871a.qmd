@@ -4,14 +4,6 @@ format: html
 editor: visual
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo       = TRUE, 
-                      fig.align  = "center",
-                      fig.height = 3, fig.width = 4)
-ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
-
-```
-
 ## Instructions
 
 Complete the following exercises using the appropriate packages in R. Ensure that your solutions are optimized and use functional programming principles where applicable.
