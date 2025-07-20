@@ -65,7 +65,6 @@ names(df)
 
 #5th: Renaming Columns Names, replacing --- with NA, and converting character columns to numeric by removing commas and percent signs.
 
-df <- df |> 
 df <- df |>
   select(
     state_or_territory,
@@ -103,7 +102,7 @@ Please download a duck database. <https://data-science-master.github.io/lectures
 -   Use `duckdb()` and `DBI::dbConnect()` to create a connection to "flights.duckdb".
 
 ```{r}
-     practcon<- dbConnect(duckdb(dbdir = "./data/flights.duckdb", read_only = FALSE))
+     practcon<- dbConnect(duckdb(dbdir = "/Users/agustinaroffo/Desktop/DATA-613/Homework/flights.duckdb", read_only = FALSE))
 
 ```
 
@@ -128,8 +127,18 @@ dbIsValid(practcon)
 Please note that a basic SQL code chunk looks like this (put SQL code between the chunks):
 
 ```{r, echo = FALSE, comment = ""}
-    codechunk <- "```{sql, connection=con}\n\n```"
-    writeLines(codechunk)
+library(DBI)
+library(duckdb)
+
+codechunk <- "```{sql, connection=con}\n\n```"
+writeLines(codechunk)
+    
+con <- dbConnect(
+  duckdb::duckdb(),
+  dbdir = "flights.duckdb",
+   read_only = TRUE
+)    
+
 ```
 
 Print out a summary of the tables in this database.
@@ -143,6 +152,13 @@ Print out a summary of the tables in this database.
 ### Problem 2: Select Flights from a Specific Carrier
 
 Write a SQL query to find all flights from the carrier "United Air Lines Inc.".
+
+```{sql}
+#| connection: con
+SELECT *
+FROM flights
+WHERE carrier = 'UA';
+```
 
 ### Problem 3: Count the Number of Flights for Each Carrier
 
