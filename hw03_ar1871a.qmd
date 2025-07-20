@@ -63,36 +63,37 @@ df <- SaTr_tables[[1]] |>
 #4th: View cleaned column names to be able to rename them properly 
 names(df)
 
-#5th: Renaming Columns Names and replacing --- with NA
+#5th: Renaming Columns Names, replacing --- with NA, and converting character columns to numeric by removing commas and percent signs.
+
 df <- df |> 
+df <- df |>
   select(
     state_or_territory,
-    census_population_8_9_a_2,     
+    census_population_8_9_a,        
+    census_population_8_9_a_2,      
+    change_2010_2020_9_a,           
+    change_2010_2020_9_a_2,         
     percent_us_2020,
-    percent_ec_2020,
-    house_seats_b,
-    pop_perelec_vote_2020_c,
-    pop_perseat_2020_a
+    percent_ec_2020
   ) |>
   rename(
     SoT = state_or_territory,
-    Population = census_population_8_9_a_2,
+    Pop_2024 = census_population_8_9_a,
+    Pop_2020 = census_population_8_9_a_2,
+    Change_pct = change_2010_2020_9_a,
+    Change_abs = change_2010_2020_9_a_2,
     Percent_US = percent_us_2020,
-    Percent_EC = percent_ec_2020,
-    House_Seats = house_seats_b,
-    Pop_per_elec_vote_2020 = pop_perelec_vote_2020_c,
-    Pop_per_seat_2020 = pop_perseat_2020_a
-  ) |> 
-  mutate(across(everything(), ~ na_if(.x, ""))) |> 
+    Percent_EC = percent_ec_2020
+  ) |>
+  mutate(across(everything(), ~ na_if(.x, ""))) |>
   mutate(
-    Population = as.numeric(str_remove_all(Population, ",")),
+    Pop_2024 = as.numeric(str_remove_all(Pop_2024, ",")),
+    Pop_2020 = as.numeric(str_remove_all(Pop_2020, ",")),
+    Change_pct = as.numeric(str_remove_all(Change_pct, "%")),
+    Change_abs = as.numeric(str_remove_all(Change_abs, ",")),
     Percent_US = as.numeric(str_remove_all(Percent_US, "%")),
-    Percent_EC = as.numeric(str_remove_all(Percent_EC, "%")),
-    Pop_per_elec_vote_2020 = as.numeric(str_remove_all(Pop_per_elec_vote_2020, ",")),
-    Pop_per_seat_2020 = as.numeric(str_remove_all(Pop_per_seat_2020, ",")),
-    House_Seats = as.numeric(House_Seats)
+    Percent_EC = as.numeric(str_remove_all(Percent_EC, "%"))
   )
-
 ```
 
 ## SQL
