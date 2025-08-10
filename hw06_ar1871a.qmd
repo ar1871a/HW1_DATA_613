@@ -102,6 +102,11 @@ tidy_books |>
 get_sentiments("bing") |>
   filter(sentiment == "positive") |>
   slice_sample(n = 10)
+
+#Afinn
+get_sentiments("afinn") |>
+  filter(value >= 1) |>
+  slice_sample(n = 10)
 ```
 
 1.  **Push to GitHub**
