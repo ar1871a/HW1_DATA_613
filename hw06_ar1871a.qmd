@@ -89,13 +89,17 @@ head(tidy_books)
 
 ```{r}
 library(textdata)
+library(ggplot2)
+
+#1 
+
 #nrc
 get_sentiments("nrc") |>
   filter(sentiment == "joy") ->
-nrcfear
+nrcjoy
 
 tidy_books |>
-  inner_join(nrcfear, by = "word") |>
+  inner_join(nrcjoy, by = "word") |>
   count(word, sort = TRUE)
 
 #Bing
@@ -107,6 +111,46 @@ get_sentiments("bing") |>
 get_sentiments("afinn") |>
   filter(value >= 1) |>
   slice_sample(n = 10)
+
+#2 (Joining each with Emma)
+
+#Emma's text tokenization
+emmas_words <- austen_books() |>
+  filter(book == "Emma") |>
+  unnest_tokens(word, text) |>
+  anti_join(stop_words, by = "word")
+
+#BING ANALYSIS
+
+get_sentiments("bing") |> filter(sentiment == "positive") -> emmas_bing
+
+tidy_books |>
+  inner_join(emmas_bing, by = "word") |>
+  count(word, sort = TRUE) |>
+  filter(n > 50) ->
+emma_bing_final
+
+
+#NRC
+get_sentiments("nrc") |>
+  filter(sentiment == "joy") -> nrcjoy2
+
+tidy_books |>
+  inner_join(nrcjoy2, by = "word") |>
+  count(word, sort = TRUE) |>
+  filter(n > 50) ->
+emma_nrc_final
+
+#AFINN
+emmas_afinn <- get_sentiments("afinn") |> filter(value >= 1)
+
+tidy_books |>
+  inner_join(emmas_afinn, by = "word") |>
+  count(word, sort = TRUE) |>
+  filter(n > 50) ->
+emma_afinn_final
+
+
 ```
 
 1.  **Push to GitHub**
