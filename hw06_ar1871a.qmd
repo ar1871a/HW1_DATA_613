@@ -97,6 +97,11 @@ nrcfear
 tidy_books |>
   inner_join(nrcfear, by = "word") |>
   count(word, sort = TRUE)
+
+#Bing
+get_sentiments("bing") |>
+  filter(sentiment == "positive") |>
+  slice_sample(n = 10)
 ```
 
 1.  **Push to GitHub**
