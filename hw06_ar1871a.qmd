@@ -65,6 +65,11 @@ head(orig_books)
     -   Use `unnest_tokens()` to tokenize text into individual words.
 
 ```{r}
+austen_books() %>%
+  unnest_tokens(output = word, input = text) ->
+tidy_books
+
+head(tidy_books)
 
 ```
 
@@ -82,7 +87,20 @@ head(orig_books)
         -   Filter for frequently occurring words (`n > 50`).
         -   Visualize using a **bar chart** (`ggplot2`) and a **word cloud** (`wordcloud`).
 
-2.  **Push to GitHub**
+```{r}
+library(textdata)
+get_sentiments("nrc") |>
+  filter(sentiment == "joy") ->
+nrcfear
+
+tidy_books |>
+  filter(book == "Emma") |>
+  inner_join(nrcfear, by = "word") |>
+  count(word, sort = TRUE)
+
+```
+
+1.  **Push to GitHub**
 
     -   Push your complete R script (`.R` file) to a **GitHub repository**.
 
