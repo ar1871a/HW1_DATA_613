@@ -89,15 +89,14 @@ head(tidy_books)
 
 ```{r}
 library(textdata)
+#nrc
 get_sentiments("nrc") |>
   filter(sentiment == "joy") ->
 nrcfear
 
 tidy_books |>
-  filter(book == "Emma") |>
   inner_join(nrcfear, by = "word") |>
   count(word, sort = TRUE)
-
 ```
 
 1.  **Push to GitHub**
