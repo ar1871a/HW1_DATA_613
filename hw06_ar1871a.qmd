@@ -90,6 +90,11 @@ head(tidy_books)
 ```{r}
 library(textdata)
 library(ggplot2)
+library(forcats)
+library(wordcloud)
+library(RColorBrewer)
+library(dplyr)
+library(tidytext)
 
 #1 
 
@@ -149,6 +154,64 @@ tidy_books |>
   count(word, sort = TRUE) |>
   filter(n > 50) ->
 emma_afinn_final
+
+# BING Visualizations
+
+# Bar chart
+emma_bing_final %>%
+  slice_max(order_by = n, n = 10) %>%
+  mutate(word = fct_reorder(word, n)) %>%
+  ggplot(aes(word, n)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(y = "Frequency", x = NULL, 
+       title = "Emma × Bing (positive) — n > 50")
+
+# Word cloud
+bing_word_counts |>
+  anti_join(stop_words, by = "word") |>
+  count(word) |>
+  with(wordcloud(word, n, max.words = 30))
+
+
+# NRC Visualizations
+
+#Bar Chart
+
+emma_nrc_final %>%
+  slice_max(order_by = n, n = 10) %>%
+  mutate(word = fct_reorder(word, n)) %>%
+  ggplot(aes(word, n)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(y = "Frequency", x = NULL, 
+       title = "Emma × NRC (joy) — n > 50")
+
+#Wordcloud
+
+emma_nrc_final |>
+  anti_join(stop_words, by = "word") |>
+  count(word) |>
+  with(wordcloud(word, n, max.words = 30))
+
+#AFINN Visualizations
+
+#Bar Chart
+
+emma_afinn_final %>%
+  slice_max(order_by = n, n = 10) %>%
+  mutate(word = fct_reorder(word, n)) %>%
+  ggplot(aes(word, n)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(y = "Frequency", x = NULL, 
+       title = "Emma × AFINN (value ≥ 1) — n >= 50")
+
+emma_afinn_final |>
+  anti_join(stop_words, by = "word") |>
+  count(word) |>
+  with(wordcloud(word, n, max.words = 30))
+
 
 
 ```
